@@ -1,8 +1,16 @@
+let interval = 103
+
 window.onload = function () {
     canv = document.getElementById("gc");
     ctx = canv.getContext("2d");
     document.addEventListener("keydown", keyPush);
-    setInterval(game, 1000 / 10);
+    timeout()
+    function timeout() {
+        setTimeout(function () {
+            game()
+            timeout();
+        }, interval);
+    }
 }
 
 const stLength = 3
@@ -53,6 +61,7 @@ function game() {
             tail = stLength;
             applesRemaining = 0
             colors = ['lime', 'lime', 'lime']
+            interval = 100
         }
     }
 
@@ -76,6 +85,7 @@ function game() {
     }
 
     if (applesRemaining == 0) {
+        if (interval > 1) { interval -= 3 }
         apples = []
         for (let i = 0; i < numOfApples; i++) {
             ax = Math.floor(Math.random() * tc);
