@@ -85,7 +85,7 @@ function game() {
     }
 
     if (applesRemaining == 0) {
-        if (interval -3 > 1) { interval -= 3 }
+        if (interval - 3 > 1) { interval -= 3 }
         apples = []
         for (let i = 0; i < numOfApples; i++) {
             ax = Math.floor(Math.random() * tc);
