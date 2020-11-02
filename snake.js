@@ -37,7 +37,7 @@ let highscore = 0
 let level = 0
 
 const appleTtl = 20
-const appleTimeBonus = 15
+const appleTimeBonus = 3
 
 const numOfApples = 3
 let applesRemaining = 0
@@ -103,8 +103,12 @@ function game() {
 
     for (let i = 0; i < apples.length; i++) {
         if (apples[i].x == px && apples[i].y == py) {
-
-            interval += apples[i].timeBonus
+            if (apples[i].ttl >= 0) {
+                interval += apples[i].ttl
+            }
+            if (interval - 1 > minPlayableInterval) {
+                interval--
+            }
 
             colors.push(apples[i].color)
             tail++;
