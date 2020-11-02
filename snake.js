@@ -35,6 +35,7 @@ let highscore = 0
 let level = 0
 
 const appleTtl = 20
+const appleTimeBonus = 15
 
 const numOfApples = 3
 let applesRemaining = 0
@@ -137,7 +138,7 @@ function game() {
             score += 3 * level
         }
         level += 1
-        apples.push({ x: ax, y: ay, color: "red", ttl: appleTtl, timeBonus: 30, scoreBonus: level })
+        apples.push({ x: ax, y: ay, color: "red", ttl: appleTtl, timeBonus: appleTimeBonus, scoreBonus: level })
     }
 
     apples = apples.filter(function (value, index, arr) { return value.ttl != 0 })
