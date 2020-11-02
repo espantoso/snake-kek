@@ -34,6 +34,8 @@ let score = 0
 let highscore = 0
 let level = 0
 
+const appleTtl = 20
+
 const numOfApples = 3
 let applesRemaining = 0
 
@@ -74,7 +76,7 @@ function game() {
             applesRemaining = 0
             colors = ['lime', 'lime', 'lime']
             interval = 103
-            if (score > highscore){
+            if (score > highscore) {
                 highscore = score
             }
             score = 0
@@ -88,38 +90,63 @@ function game() {
     }
 
     apples.forEach(a => {
+        if (a.timeBonus > 0 && a.ttl % 2 != 0) {
+            ctx.fillStyle = "gold"
+            ctx.fillRect(a.x * gs, a.y * gs, gs, gs);
+        }
         ctx.fillStyle = a.color
-        ctx.fillRect(a.x * gs, a.y * gs, gs - 2, gs - 2);
+        ctx.fillRect(a.x * gs + 2, a.y * gs + 2, gs - 4, gs - 4);
     });
 
     for (let i = 0; i < apples.length; i++) {
         if (apples[i].x == px && apples[i].y == py) {
+
+            interval += apples[i].timeBonus
+
             colors.push(apples[i].color)
             tail++;
-            applesRemaining--
-            apples = apples.filter(function (value, index, arr) { return index != i })
+
+            if (apples[i].ttl < 0) { applesRemaining-- }
+
             if (level != 0) {
-                score += 1
+                score += apples[i].scoreBonus
+            }
+            apples = apples.filter(function (value, index, arr) { return index != i })
+            if (score > highscore) {
+                highscore = score
             }
         }
     }
 
     if (applesRemaining == 0) {
         if (interval - level > 1) { interval -= level }
-        apples = []
+        apples = apples.filter(function (value, index, arr) { return value.ttl > 0 && level != 0 })
         for (let i = 0; i < numOfApples; i++) {
             ax = Math.floor(Math.random() * tc);
             ay = Math.floor(Math.random() * tc);
             let color = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-            apples.push({ x: ax, y: ay, color: color })
+            apples.push({ x: ax, y: ay, color: color, ttl: -1, timeBonus: 0, scoreBonus: 1 })
             // ctx.fillRect(ax * gs, ay * gs, gs - 2, gs - 2);
             applesRemaining = numOfApples
         }
+
+        ax = Math.floor(Math.random() * tc);
+        ay = Math.floor(Math.random() * tc);
+
         if (level != 0) {
             score += 3 * level
         }
         level += 1
+        apples.push({ x: ax, y: ay, color: "red", ttl: appleTtl, timeBonus: 30, scoreBonus: level })
     }
+
+    apples = apples.filter(function (value, index, arr) { return value.ttl != 0 })
+
+    apples.forEach(function (part, index, theArray) {
+        if (theArray[index].ttl > 0) {
+            theArray[index].ttl -= 1
+        }
+    });
 
     function fillGameField() {
         ctx.fillStyle = "black";
