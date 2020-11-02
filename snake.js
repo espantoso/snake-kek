@@ -1,4 +1,6 @@
-let interval = 103
+const baseInterval = 100
+const minPlayableInterval = 30
+let interval = baseInterval
 
 window.onload = function () {
     canv = document.getElementById("gc");
@@ -76,7 +78,7 @@ function game() {
             tail = stLength;
             applesRemaining = 0
             colors = ['lime', 'lime', 'lime']
-            interval = 103
+            interval = baseInterval
             if (score > highscore) {
                 highscore = score
             }
@@ -110,7 +112,8 @@ function game() {
             if (apples[i].ttl < 0) { applesRemaining-- }
 
             if (level != 0) {
-                score += apples[i].scoreBonus
+                let ttlBonus = apples[i].ttl >= 0 ? apples[i].ttl : 0
+                score += apples[i].scoreBonus + ttlBonus
             }
             apples = apples.filter(function (value, index, arr) { return index != i })
             if (score > highscore) {
@@ -120,7 +123,7 @@ function game() {
     }
 
     if (applesRemaining == 0) {
-        if (interval - level > 1) { interval -= level }
+        if (interval - level >= minPlayableInterval) { interval -= level }
         apples = apples.filter(function (value, index, arr) { return value.ttl > 0 && level != 0 })
         for (let i = 0; i < numOfApples; i++) {
             ax = Math.floor(Math.random() * tc);
