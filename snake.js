@@ -3,6 +3,9 @@ let interval = 103
 window.onload = function () {
     canv = document.getElementById("gc");
     ctx = canv.getContext("2d");
+    scoreField = document.getElementById("score");
+    highScoreField = document.getElementById("highScore");
+    levelField = document.getElementById("level");
     document.addEventListener("keydown", keyPush);
     timeout()
     function timeout() {
@@ -27,16 +30,25 @@ let trail = [];
 let apples = []
 let tail = stLength;
 let colors = ['lime', 'lime', 'lime']
-
-let started = false
+let score = 0
+let highscore = 0
+let level = 0
 
 const numOfApples = 3
 let applesRemaining = 0
 
 let ctx
 let canv
+let scoreField
+let highScoreField
+let levelField
 
 function game() {
+
+    scoreField.textContent = score
+    highScoreField.textContent = highscore
+    levelField.textContent = level
+
     px += xv;
     py += yv;
     if (px < 0) {
@@ -51,8 +63,8 @@ function game() {
     if (py > tc - 1) {
         py = 0;
     }
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canv.width, canv.height);
+
+    fillGameField();
 
     for (let i = 0; i < trail.length; i++) {
         ctx.fillStyle = colors[i];
@@ -61,11 +73,16 @@ function game() {
             tail = stLength;
             applesRemaining = 0
             colors = ['lime', 'lime', 'lime']
-            interval = 100
+            interval = 103
+            if (score > highscore){
+                highscore = score
+            }
+            score = 0
+            level = 0
         }
     }
 
-    trail.push({ x: px, y: py, color: 'lime' });
+    trail.push({ x: px, y: py });
     while (trail.length > tail) {
         trail.shift();
     }
@@ -81,11 +98,14 @@ function game() {
             tail++;
             applesRemaining--
             apples = apples.filter(function (value, index, arr) { return index != i })
+            if (level != 0) {
+                score += 1
+            }
         }
     }
 
     if (applesRemaining == 0) {
-        if (interval - 3 > 1) { interval -= 3 }
+        if (interval - level > 1) { interval -= level }
         apples = []
         for (let i = 0; i < numOfApples; i++) {
             ax = Math.floor(Math.random() * tc);
@@ -95,8 +115,16 @@ function game() {
             // ctx.fillRect(ax * gs, ay * gs, gs - 2, gs - 2);
             applesRemaining = numOfApples
         }
+        if (level != 0) {
+            score += 3 * level
+        }
+        level += 1
     }
-    started = true
+
+    function fillGameField() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+    }
 }
 
 function keyPush(evt) {
